@@ -19,10 +19,10 @@ declare namespace Gantt {
   interface Task {
     id: string;
     name: string;
-    start: string;
-    end: string;
+    start: string | Date;
+    end: string | Date;
     progress: number;
-    dependencies: string;
+    dependencies: string | string[];
     custom_class?: string;
   }
 
