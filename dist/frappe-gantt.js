@@ -1,6 +1,3 @@
-var Gantt = (function () {
-'use strict';
-
 const YEAR = 'year';
 const MONTH = 'month';
 const DAY = 'day';
@@ -2057,6 +2054,4 @@ function generate_id(task) {
     );
 }
 
-return Gantt;
-
-}());
+export default Gantt;

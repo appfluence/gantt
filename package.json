@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "yarn run dev",
-    "build": "rollup -c",
+    "build": "rollup -c --output.format es",
     "dev": "rollup -c -w",
     "test": "jest",
     "test:watch": "jest --watch",
