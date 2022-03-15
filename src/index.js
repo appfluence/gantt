@@ -93,6 +93,7 @@ export default class Gantt {
             view_mode: 'Day',
             date_format: 'YYYY-MM-DD',
             popup_trigger: 'click',
+            on_contextmenu: () => {},
             custom_popup_html: null,
             language: 'en',
             sticky_header: false,

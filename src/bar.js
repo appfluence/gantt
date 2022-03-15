@@ -180,10 +180,13 @@ export default class Bar {
                 // just finished a move action, wait for a few seconds
                 return;
             }
-
             this.show_popup();
             this.gantt.unselect_all();
             this.group.classList.add('active');
+        });
+
+        $.on(this.group, 'contextmenu', e => {
+            this.gantt.trigger_event('contextmenu', [this.task, e]);
         });
 
         $.on(this.group, 'dblclick', e => {
