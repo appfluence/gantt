@@ -104,6 +104,7 @@ export default class Gantt {
 
     setup_tasks(tasks) {
         // prepare tasks
+        const indexedTasks = {};
         this.tasks = tasks.map((task, i) => {
             // convert to Date objects
             task._start = date_utils.parse(task.start);
@@ -161,7 +162,26 @@ export default class Gantt {
                 task.id = generate_id(task);
             }
 
+            indexedTasks[task.id] = task;
             return task;
+        }).filter(rootTask => {
+            const seen = new Set([rootTask.id]);
+            const open = [rootTask.id];
+            let ok = true;
+
+            while (open.length && ok) {
+                const tId = open.pop();
+                const t = indexedTasks[tId];
+                for (let dId of t.dependencies) {
+                    if (seen.has(dId)) {
+                        ok = false;
+                        break;
+                    }
+                    seen.add(dId);
+                    open.push(dId);
+                }
+            }
+            return ok;
         });
 
         this.setup_dependencies();
