@@ -104,6 +104,7 @@ export default class Gantt {
 
     setup_tasks(tasks) {
         // prepare tasks
+        const indexedTasks = {};
         this.tasks = tasks.map((task, i) => {
             // convert to Date objects
             task._start = date_utils.parse(task.start);
@@ -161,7 +162,42 @@ export default class Gantt {
                 task.id = generate_id(task);
             }
 
+            task._cyclic = false;
+            indexedTasks[task.id] = task;
             return task;
+        });
+
+        this.tasks.forEach(rootTask => {
+            if (rootTask._cyclic) {
+                return;
+            }
+            const seen = new Set([rootTask.id]);
+            const open = [rootTask.id];
+            let ok = true;
+
+            while (open.length && ok) {
+                const tId = open.pop();
+                const t = indexedTasks[tId];
+                if (t._cyclic) {
+                    ok = false;
+                    break;
+                }
+                for (let dId of t.dependencies) {
+                    if (seen.has(dId)) {
+                        ok = false;
+                        break;
+                    }
+                    seen.add(dId);
+                    open.push(dId);
+                }
+            }
+
+            if (!ok) {
+                seen.forEach((seenID) => {
+                    const t = indexedTasks[seenID];
+                    t._cyclic = true;
+                });
+            }
         });
 
         this.setup_dependencies();
@@ -719,6 +755,11 @@ export default class Gantt {
 
         $.on(this.$svg, 'mousedown', '.bar-wrapper, .handle', (e, element) => {
             const bar_wrapper = $.closest('.bar-wrapper', element);
+            parent_bar_id = bar_wrapper.getAttribute('data-id');
+            const parent_bar = this.get_bar(parent_bar_id);
+            if (parent_bar && parent_bar.task && parent_bar.task._cyclic) {
+                return;
+            }
 
             if (element.classList.contains('left')) {
                 is_resizing_left = true;
@@ -733,7 +774,6 @@ export default class Gantt {
             x_on_start = e.offsetX;
             y_on_start = e.offsetY;
 
-            parent_bar_id = bar_wrapper.getAttribute('data-id');
             const ids = [
                 parent_bar_id,
                 ...this.get_all_dependent_tasks(parent_bar_id)
@@ -757,7 +797,7 @@ export default class Gantt {
             const dy = e.offsetY - y_on_start;
 
             bars.forEach(bar => {
-                if (bar.task.invalid) return;
+                if (bar.task.invalid || bar.task._cyclic) return;
                 const $bar = bar.$bar;
                 $bar.finaldx = this.get_snap_position(dx);
 
