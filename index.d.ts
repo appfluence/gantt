@@ -29,6 +29,7 @@ declare namespace Gantt {
   interface EnrichedTask extends Task {
     _start: Date;
     _end: Date;
+    _cyclic: boolean;
     _index: number;
   }
 
