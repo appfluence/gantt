@@ -162,9 +162,15 @@ export default class Gantt {
                 task.id = generate_id(task);
             }
 
+            task._cyclic = false;
             indexedTasks[task.id] = task;
             return task;
-        }).filter(rootTask => {
+        });
+
+        this.tasks.forEach(rootTask => {
+            if (rootTask._cyclic) {
+                return;
+            }
             const seen = new Set([rootTask.id]);
             const open = [rootTask.id];
             let ok = true;
@@ -172,6 +178,10 @@ export default class Gantt {
             while (open.length && ok) {
                 const tId = open.pop();
                 const t = indexedTasks[tId];
+                if (t._cyclic) {
+                    ok = false;
+                    break;
+                }
                 for (let dId of t.dependencies) {
                     if (seen.has(dId)) {
                         ok = false;
@@ -181,8 +191,16 @@ export default class Gantt {
                     open.push(dId);
                 }
             }
-            return ok;
+
+            if (!ok) {
+                seen.forEach((seenID) => {
+                    const t = indexedTasks[seenID];
+                    t._cyclic = true;
+                });
+            }
         });
+
+        console.log(this.tasks);
 
         this.setup_dependencies();
     }
