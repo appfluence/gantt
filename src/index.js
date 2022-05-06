@@ -200,8 +200,6 @@ export default class Gantt {
             }
         });
 
-        console.log(this.tasks);
-
         this.setup_dependencies();
     }
 
