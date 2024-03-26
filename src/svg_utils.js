@@ -59,7 +59,7 @@ function getAnimationElement(
             from,
             to,
             dur,
-            begin: 'click + ' + begin // artificial click
+            begin: 'click + ' + begin, // artificial click
         });
         return svgElement;
     }
@@ -73,7 +73,7 @@ function getAnimationElement(
         calcMode: 'spline',
         values: from + ';' + to,
         keyTimes: '0; 1',
-        keySplines: cubic_bezier('ease-out')
+        keySplines: cubic_bezier('ease-out'),
     });
     svgElement.appendChild(animateElement);
 
@@ -86,7 +86,7 @@ function cubic_bezier(name) {
         linear: '0 0 1 1',
         'ease-in': '.42 0 1 1',
         'ease-out': '0 0 .58 1',
-        'ease-in-out': '.42 0 .58 1'
+        'ease-in-out': '.42 0 .58 1',
     }[name];
 }
 
@@ -104,13 +104,13 @@ $.off = (element, event, handler) => {
 };
 
 $.bind = (element, event, callback) => {
-    event.split(/\s+/).forEach(function(event) {
+    event.split(/\s+/).forEach(function (event) {
         element.addEventListener(event, callback);
     });
 };
 
 $.delegate = (element, event, selector, callback) => {
-    element.addEventListener(event, function(e) {
+    element.addEventListener(event, function (e) {
         const delegatedTarget = e.target.closest(selector);
         if (delegatedTarget) {
             e.delegatedTarget = delegatedTarget;
