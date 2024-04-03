@@ -501,6 +501,12 @@ export default class Gantt {
                     date_utils.start_of(today, 'month'),
                     this.gantt_start,
                     'hour'
+                ),
+            [VIEW_MODE.YEAR]: () =>
+                date_utils.diff(
+                    date_utils.start_of(today, 'month'),
+                    this.gantt_start,
+                    'hour'
                 )
         };
 

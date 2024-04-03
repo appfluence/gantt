@@ -350,6 +350,15 @@ export default class Bar {
                 (rem < this.gantt.options.column_width / 60
                     ? 0
                     : this.gantt.options.column_width / 30);
+        } else if (this.gantt.view_is('Year')) {
+            console.log(dx)
+            rem = dx % (this.gantt.options.column_width / (30 * 4));
+            position =
+                odx -
+                rem +
+                (rem < this.gantt.options.column_width / (30 * 8)
+                    ? 0
+                    : this.gantt.options.column_width / (30 * 4));
         } else {
             rem = dx % this.gantt.options.column_width;
             position =
