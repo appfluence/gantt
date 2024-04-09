@@ -28,6 +28,8 @@ declare namespace Gantt {
         progress: number;
         dependencies: string | string[];
         custom_class?: string;
+        text_color?: string;
+        background_color?: string;
     }
 
     interface EnrichedTask extends Task {
