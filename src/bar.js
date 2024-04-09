@@ -74,6 +74,10 @@ export default class Bar {
     }
 
     draw_bar() {
+        let style = '';
+        if (this.task.background_color) {
+            style += `fill:${this.task.background_color};`;
+        }
         this.$bar = createSVG('rect', {
             x: this.x,
             y: this.y,
@@ -83,6 +87,7 @@ export default class Bar {
             ry: this.corner_radius,
             class: 'bar',
             append_to: this.bar_group,
+            style,
         });
 
         animateSVG(this.$bar, 'width', 0, this.width);
@@ -109,12 +114,17 @@ export default class Bar {
     }
 
     draw_label() {
+        let style = '';
+        if (this.task.background_color) {
+            style += `fill:${this.task.text_color};`;
+        }
         createSVG('text', {
             x: this.x + this.width / 2,
             y: this.y + this.height / 2,
             innerHTML: this.task.name,
             class: 'bar-label',
             append_to: this.bar_group,
+            style,
         });
         // labels get BBox in the next tick
         requestAnimationFrame(() => this.update_label_position());
