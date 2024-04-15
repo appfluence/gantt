@@ -114,17 +114,12 @@ export default class Bar {
     }
 
     draw_label() {
-        let style = '';
-        if (this.task.background_color) {
-            style += `fill:${this.task.text_color};`;
-        }
         createSVG('text', {
             x: this.x + this.width / 2,
             y: this.y + this.height / 2,
             innerHTML: this.task.name,
             class: 'bar-label',
             append_to: this.bar_group,
-            style,
         });
         // labels get BBox in the next tick
         requestAnimationFrame(() => this.update_label_position());
@@ -408,6 +403,9 @@ export default class Bar {
         } else {
             label.classList.remove('big');
             label.setAttribute('x', bar.getX() + bar.getWidth() / 2);
+            if (this.task.background_color) {
+                label.style += `fill:${this.task.text_color};`;
+            }
         }
     }
 
