@@ -56,11 +56,13 @@
   text-anchor: middle;
   font-size: 12px;
   font-weight: lighter;
-  pointer-events: none;
 }
 .gantt .bar-label.big {
   fill: #555;
   text-anchor: start;
+}
+.gantt .bar-label.no-interact {
+  pointer-events: none;
 }
 .gantt .handle {
   fill: #ddd;

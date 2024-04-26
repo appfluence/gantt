@@ -407,8 +407,8 @@ class Bar {
         this.width = this.gantt.options.column_width * this.duration;
         this.progress_width =
             this.gantt.options.column_width *
-            this.duration *
-            (this.task.progress / 100) || 0;
+                this.duration *
+                (this.task.progress / 100) || 0;
         this.group = createSVG('g', {
             class: 'bar-wrapper ' + (this.task.custom_class || ''),
             'data-id': this.task.id,
@@ -565,11 +565,11 @@ class Bar {
             this.group.classList.add('active');
         });
 
-        $.on(this.group, 'contextmenu', e => {
+        $.on(this.group, 'contextmenu', (e) => {
             this.gantt.trigger_event('contextmenu', [this.task, e]);
         });
 
-        $.on(this.group, 'dblclick', e => {
+        $.on(this.group, 'dblclick', (e) => {
             if (this.action_completed) {
                 // just finished a move action, wait for a few seconds
                 return;
@@ -598,7 +598,7 @@ class Bar {
             target_element: this.$bar,
             title: this.task.name,
             subtitle: subtitle,
-            task: this.task
+            task: this.task,
         });
     }
 
@@ -731,7 +731,6 @@ class Bar {
                     ? 0
                     : this.gantt.options.column_width / 30);
         } else if (this.gantt.view_is('Year')) {
-            console.log(dx);
             rem = dx % (this.gantt.options.column_width / (30 * 4));
             position =
                 odx -
@@ -768,15 +767,23 @@ class Bar {
         );
     }
 
+    getLabel() {
+        return this.group.querySelector('.bar-label');
+    }
+
     update_label_position() {
         const bar = this.$bar,
-            label = this.group.querySelector('.bar-label');
+            label = this.getLabel();
 
         if (label.getBBox().width > bar.getWidth()) {
+            //outside bar
             label.classList.add('big');
+            label.classList.remove('no-interact');
             label.setAttribute('x', bar.getX() + bar.getWidth() + 5);
         } else {
+            //inside bar
             label.classList.remove('big');
+            label.classList.add('no-interact');
             label.setAttribute('x', bar.getX() + bar.getWidth() / 2);
             if (this.task.background_color) {
                 label.style += `fill:${this.task.text_color};`;
@@ -1011,7 +1018,7 @@ class Gantt {
         } else {
             throw new TypeError(
                 'Frappé Gantt only supports usage of a string CSS selector,' +
-                " HTML DOM element or SVG DOM element for the 'element' parameter"
+                    " HTML DOM element or SVG DOM element for the 'element' parameter"
             );
         }
 
@@ -1062,11 +1069,11 @@ class Gantt {
             view_mode: 'Day',
             date_format: 'YYYY-MM-DD',
             popup_trigger: 'click',
-            on_contextmenu: () => { },
+            on_contextmenu: () => {},
             custom_popup_html: null,
             language: 'en',
             sticky_header: false,
-            can_click_ghost_task: false
+            can_click_ghost_task: false,
         };
         this.options = Object.assign({}, default_options, options);
     }
@@ -1136,7 +1143,7 @@ class Gantt {
             return task;
         });
 
-        this.tasks.forEach(rootTask => {
+        this.tasks.forEach((rootTask) => {
             if (rootTask._cyclic) {
                 return;
             }
@@ -1316,7 +1323,7 @@ class Gantt {
             'bar',
             'details',
             'header',
-            'date'
+            'date',
         ];
         // make group layers
         for (let layer of layers) {
@@ -1341,7 +1348,7 @@ class Gantt {
             this.options.header_height +
             this.options.padding +
             (this.options.bar_height + this.options.padding) *
-            this.tasks.length;
+                this.tasks.length;
 
         createSVG('rect', {
             x: 0,
@@ -1476,18 +1483,18 @@ class Gantt {
                     date_utils.start_of(today, 'month'),
                     this.gantt_start,
                     'hour'
-                )
+                ),
         };
 
         const offset = getOffset[this.options.view_mode]();
 
-        const x = offset / this.options.step * this.options.column_width;
+        const x = (offset / this.options.step) * this.options.column_width;
         const y = 0;
 
         const width = this.options.column_width;
         const height =
             (this.options.bar_height + this.options.padding) *
-            this.tasks.length +
+                this.tasks.length +
             this.options.header_height +
             this.options.padding / 2;
 
@@ -1497,7 +1504,7 @@ class Gantt {
             width,
             height,
             class: 'today-highlight',
-            append_to: this.layers.grid
+            append_to: this.layers.grid,
         });
     }
 
@@ -1573,10 +1580,10 @@ class Gantt {
                 date.getDate() !== last_date.getDate()
                     ? date.getMonth() !== last_date.getMonth()
                         ? date_utils.format(
-                            date,
-                            'D MMM',
-                            this.options.language
-                        )
+                              date,
+                              'D MMM',
+                              this.options.language
+                          )
                         : date_utils.format(date, 'D', this.options.language)
                     : '',
             Day_upper:
@@ -1605,9 +1612,9 @@ class Gantt {
 
         const x_pos = {
             'Quarter Day_lower': 0,
-            'Quarter Day_upper': this.options.column_width * 4 / 2,
+            'Quarter Day_upper': (this.options.column_width * 4) / 2,
             'Half Day_lower': 0,
-            'Half Day_upper': this.options.column_width * 2 / 2,
+            'Half Day_upper': (this.options.column_width * 2) / 2,
             Day_lower: this.options.column_width / 2,
             Day_upper: (this.options.column_width * 30) / 2,
             Week_lower: 0,
@@ -1690,7 +1697,7 @@ class Gantt {
 
         const scroll_pos =
             (hours_before_first_task / this.options.step) *
-            this.options.column_width -
+                this.options.column_width -
             this.options.column_width;
 
         parent_element.scrollLeft = scroll_pos;
@@ -1774,7 +1781,7 @@ class Gantt {
             const dx = e.offsetX - x_on_start;
             e.offsetY - y_on_start;
 
-            bars.forEach(bar => {
+            bars.forEach((bar) => {
                 if (bar.task.invalid || bar.task._cyclic) return;
                 const $bar = bar.$bar;
                 $bar.finaldx = this.get_snap_position(dx);
@@ -1797,7 +1804,7 @@ class Gantt {
                         });
                     } else {
                         bar.update_bar_position({
-                            x: $bar.ox + $bar.finaldx
+                            x: $bar.ox + $bar.finaldx,
                         });
                     }
                 } else if (is_dragging) {
@@ -2014,9 +2021,9 @@ class Gantt {
                 .getElementsByClassName('today-highlight')[0]
                 .scrollIntoView({
                     behavior: 'smooth',
-                    inline: 'center'
+                    inline: 'center',
                 });
-        } catch (err) { }
+        } catch (err) {}
     }
 }
 
