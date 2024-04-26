@@ -72,11 +72,14 @@ $handle-color: #ddd !default;
 		text-anchor: middle;
 		font-size: 12px;
 		font-weight: lighter;
-		pointer-events: none;
 
 		&.big {
 			fill: $text-light;
 			text-anchor: start;
+		}
+
+		&.no-interact {
+		    pointer-events: none;
 		}
 	}
 

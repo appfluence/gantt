@@ -32,8 +32,8 @@ export default class Bar {
         this.width = this.gantt.options.column_width * this.duration;
         this.progress_width =
             this.gantt.options.column_width *
-            this.duration *
-            (this.task.progress / 100) || 0;
+                this.duration *
+                (this.task.progress / 100) || 0;
         this.group = createSVG('g', {
             class: 'bar-wrapper ' + (this.task.custom_class || ''),
             'data-id': this.task.id,
@@ -190,11 +190,11 @@ export default class Bar {
             this.group.classList.add('active');
         });
 
-        $.on(this.group, 'contextmenu', e => {
+        $.on(this.group, 'contextmenu', (e) => {
             this.gantt.trigger_event('contextmenu', [this.task, e]);
         });
 
-        $.on(this.group, 'dblclick', e => {
+        $.on(this.group, 'dblclick', (e) => {
             if (this.action_completed) {
                 // just finished a move action, wait for a few seconds
                 return;
@@ -223,7 +223,7 @@ export default class Bar {
             target_element: this.$bar,
             title: this.task.name,
             subtitle: subtitle,
-            task: this.task
+            task: this.task,
         });
     }
 
@@ -356,7 +356,6 @@ export default class Bar {
                     ? 0
                     : this.gantt.options.column_width / 30);
         } else if (this.gantt.view_is('Year')) {
-            console.log(dx)
             rem = dx % (this.gantt.options.column_width / (30 * 4));
             position =
                 odx -
@@ -393,15 +392,23 @@ export default class Bar {
         );
     }
 
+    getLabel() {
+        return this.group.querySelector('.bar-label');
+    }
+
     update_label_position() {
         const bar = this.$bar,
-            label = this.group.querySelector('.bar-label');
+            label = this.getLabel();
 
         if (label.getBBox().width > bar.getWidth()) {
+            //outside bar
             label.classList.add('big');
+            label.classList.remove('no-interact');
             label.setAttribute('x', bar.getX() + bar.getWidth() + 5);
         } else {
+            //inside bar
             label.classList.remove('big');
+            label.classList.add('no-interact');
             label.setAttribute('x', bar.getX() + bar.getWidth() / 2);
             if (this.task.background_color) {
                 label.style += `fill:${this.task.text_color};`;
