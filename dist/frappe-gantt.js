@@ -407,8 +407,8 @@ class Bar {
         this.width = this.gantt.options.column_width * this.duration;
         this.progress_width =
             this.gantt.options.column_width *
-                this.duration *
-                (this.task.progress / 100) || 0;
+            this.duration *
+            (this.task.progress / 100) || 0;
         this.group = createSVG('g', {
             class: 'bar-wrapper ' + (this.task.custom_class || ''),
             'data-id': this.task.id,
@@ -462,6 +462,7 @@ class Bar {
             ry: this.corner_radius,
             class: 'bar',
             append_to: this.bar_group,
+            'data-task-id': this.task.id,
             style,
         });
 
@@ -1018,7 +1019,7 @@ class Gantt {
         } else {
             throw new TypeError(
                 'Frappé Gantt only supports usage of a string CSS selector,' +
-                    " HTML DOM element or SVG DOM element for the 'element' parameter"
+                " HTML DOM element or SVG DOM element for the 'element' parameter"
             );
         }
 
@@ -1069,7 +1070,7 @@ class Gantt {
             view_mode: 'Day',
             date_format: 'YYYY-MM-DD',
             popup_trigger: 'click',
-            on_contextmenu: () => {},
+            on_contextmenu: () => { },
             custom_popup_html: null,
             language: 'en',
             sticky_header: false,
@@ -1348,7 +1349,7 @@ class Gantt {
             this.options.header_height +
             this.options.padding +
             (this.options.bar_height + this.options.padding) *
-                this.tasks.length;
+            this.tasks.length;
 
         createSVG('rect', {
             x: 0,
@@ -1494,7 +1495,7 @@ class Gantt {
         const width = this.options.column_width;
         const height =
             (this.options.bar_height + this.options.padding) *
-                this.tasks.length +
+            this.tasks.length +
             this.options.header_height +
             this.options.padding / 2;
 
@@ -1580,10 +1581,10 @@ class Gantt {
                 date.getDate() !== last_date.getDate()
                     ? date.getMonth() !== last_date.getMonth()
                         ? date_utils.format(
-                              date,
-                              'D MMM',
-                              this.options.language
-                          )
+                            date,
+                            'D MMM',
+                            this.options.language
+                        )
                         : date_utils.format(date, 'D', this.options.language)
                     : '',
             Day_upper:
@@ -1697,7 +1698,7 @@ class Gantt {
 
         const scroll_pos =
             (hours_before_first_task / this.options.step) *
-                this.options.column_width -
+            this.options.column_width -
             this.options.column_width;
 
         parent_element.scrollLeft = scroll_pos;
@@ -2017,13 +2018,31 @@ class Gantt {
      */
     focus_on_today() {
         try {
+            const now = new Date();
+            const closest = this.tasks.reduce((prev, cur) => {
+                if (!prev) return cur;
+                const prev_diff = Math.abs(prev._start - now);
+                const cur_diff = Math.abs(cur._start - now);
+                return cur_diff < prev_diff ? cur : prev;
+            }, undefined);
+
+            if (!closest) {
+                this.$svg
+                    .getElementsByClassName('today-highlight')[0]
+                    .scrollIntoView({
+                        behavior: 'smooth',
+                        inline: 'center',
+                    });
+                return;
+            }
+
             this.$svg
-                .getElementsByClassName('today-highlight')[0]
+                .querySelector(`[data-task-id="${closest.id}"]`)
                 .scrollIntoView({
                     behavior: 'smooth',
                     inline: 'center',
                 });
-        } catch (err) {}
+        } catch (err) { }
     }
 }
 
