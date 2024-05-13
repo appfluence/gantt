@@ -1407,7 +1407,7 @@ class Gantt {
             width: header_width,
             height: header_height,
             class: 'grid-header',
-            append_to: this.layers.grid,
+            append_to: this.layers.header,
         });
     }
 
