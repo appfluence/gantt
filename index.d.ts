@@ -30,6 +30,8 @@ declare namespace Gantt {
         custom_class?: string;
         text_color?: string;
         background_color?: string;
+        icon?: string;
+        owner?: string;
     }
 
     interface EnrichedTask extends Task {
