@@ -445,6 +445,7 @@ class Bar {
         this.draw_bar();
         this.draw_progress_bar();
         this.draw_label();
+        this.draw_images();
         this.draw_resize_handles();
     }
 
@@ -499,6 +500,36 @@ class Bar {
         });
         // labels get BBox in the next tick
         requestAnimationFrame(() => this.update_label_position());
+    }
+
+    draw_images() {
+        if (this.task.icon) {
+            const href = this.task.icon;
+            createSVG('image', {
+                x: this.x,
+                y: this.y,
+                width: this.height,
+                height: this.height,
+                href,
+                class: 'bar-icon',
+                append_to: this.bar_group,
+
+            });
+        }
+
+        if (this.task.owner) {
+            const href = this.task.owner;
+            createSVG('image', {
+                x: this.x,
+                y: this.y,
+                width: this.height,
+                height: this.height,
+                href,
+                class: 'bar-owner',
+                append_to: this.bar_group,
+                'clip-path': 'inset(0% round 15px)',
+            });
+        }
     }
 
     draw_resize_handles() {
@@ -772,20 +803,49 @@ class Bar {
         return this.group.querySelector('.bar-label');
     }
 
+    getIcon() {
+        return this.group.querySelector('.bar-icon');
+    }
+
+    getOwner() {
+        return this.group.querySelector('.bar-owner');
+    }
+
     update_label_position() {
         const bar = this.$bar,
-            label = this.getLabel();
+            label = this.getLabel(),
+            icon = this.getIcon(),
+            owner = this.getOwner();
 
-        if (label.getBBox().width > bar.getWidth()) {
+        const labelWidth = label.getBBox().width;
+        let extraOffset = 5;
+
+        if (labelWidth > bar.getWidth()) {
             //outside bar
+            const offsetX = bar.getX() + bar.getWidth() + 5;
             label.classList.add('big');
             label.classList.remove('no-interact');
-            label.setAttribute('x', bar.getX() + bar.getWidth() + 5);
+            label.setAttribute('x', offsetX);
+            if (icon) {
+                icon.setAttribute('x', offsetX + extraOffset + labelWidth);
+                extraOffset += 5 + 20;
+            }
+            if (owner) {
+                owner.setAttribute('x', offsetX + extraOffset + labelWidth);
+            }
         } else {
             //inside bar
+            const offsetX = bar.getX() + bar.getWidth() / 2;
             label.classList.remove('big');
             label.classList.add('no-interact');
-            label.setAttribute('x', bar.getX() + bar.getWidth() / 2);
+            label.setAttribute('x', offsetX);
+            if (icon) {
+                icon.setAttribute('x', offsetX + extraOffset + labelWidth / 2);
+                extraOffset += 5 + 20;
+            }
+            if (owner) {
+                owner.setAttribute('x', offsetX + extraOffset + labelWidth / 2);
+            }
             if (this.task.background_color) {
                 label.style += `fill:${this.task.text_color};`;
             }
